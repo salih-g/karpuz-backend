@@ -7,6 +7,11 @@ const createUser = async (userBody) => {
 	} catch (err) {}
 };
 
+const getUserByUsername = async (username) => {
+	return User.findOne({ username });
+};
+
 module.exports = {
 	createUser,
+	getUserByUsername,
 };
