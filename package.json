@@ -37,6 +37,9 @@
 		"express-rate-limit": "^6.4.0",
 		"helmet": "^5.1.0",
 		"http-status": "^1.5.2",
+		"joi": "^17.6.0",
+		"jsonwebtoken": "^8.5.1",
+		"moment": "^2.29.3",
 		"mongoose": "^6.3.4",
 		"pm2": "^5.2.0",
 		"volleyball": "^1.5.1",
@@ -44,7 +47,10 @@
 		"xss-clean": "^0.1.1"
 	},
 	"devDependencies": {
+		"@faker-js/faker": "^6.3.1",
 		"jest": "^28.1.0",
-		"nodemon": "^2.0.16"
+		"node-mocks-http": "^1.11.0",
+		"nodemon": "^2.0.16",
+		"supertest": "^6.2.3"
 	}
 }

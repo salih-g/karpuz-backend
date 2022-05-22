@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const { roles } = require('../config/roles');
 
 const userSchema = mongoose.Schema(
 	{
@@ -10,7 +9,7 @@ const userSchema = mongoose.Schema(
 			unique: true,
 			lowercase: true,
 			minlength: 3,
-			maxlength: 10,
+			maxlength: 20,
 		},
 
 		password: {

@@ -1,12 +1,14 @@
 const httpStatus = require('http-status');
 
-const { authService } = require('../services');
+const catchAsync = require('../utils/catchAsync');
+const { userService, tokenService } = require('../services');
 
-const register = async (req, res) => {
-	const message = await authService.getMessage();
+const register = catchAsync(async (req, res) => {
+	const user = await userService.createUser(req.body);
+	const tokens = await tokenService.generateAuthTokens(user);
 
-	res.status(httpStatus.OK).send(message);
-};
+	res.status(httpStatus.CREATED).send({ user, tokens });
+});
 
 module.exports = {
 	register,

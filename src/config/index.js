@@ -12,5 +12,6 @@ module.exports = {
 	},
 	jwt: {
 		secret: process.env.JWT_SECRET,
+		accessExpirationMinutes: process.env.JWT_ACCESS_EXPIRATION_MINUTES,
 	},
 };
