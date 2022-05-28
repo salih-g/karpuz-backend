@@ -31,9 +31,7 @@ const userSchema = mongoose.Schema(
 
 userSchema.post('save', function (error, _, next) {
 	if (error.code === 11000) {
-		next(
-			new ApiError(httpStatus.BAD_REQUEST, 'There was a duplicate key error'),
-		);
+		next(new ApiError(httpStatus.BAD_REQUEST, 'This username was taken'));
 	} else {
 		next();
 	}
