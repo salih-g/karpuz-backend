@@ -39,7 +39,6 @@ describe('Auth routes', () => {
 				username: newUser.username,
 				createdAt: expect.anything(),
 				updatedAt: expect.anything(),
-				password: expect.anything(),
 			});
 
 			const dbUser = await User.findById(res.body.user._id);
@@ -51,7 +50,6 @@ describe('Auth routes', () => {
 				username: newUser.username,
 				createdAt: expect.anything(),
 				updatedAt: expect.anything(),
-				password: expect.anything(),
 			});
 
 			expect(res.body.tokens).toEqual({
@@ -94,7 +92,6 @@ describe('Auth routes', () => {
 				_id: expect.anything(),
 				createdAt: expect.anything(),
 				updatedAt: expect.anything(),
-				password: expect.anything(),
 				username: userOne.username,
 				role: userOne.role,
 			});
