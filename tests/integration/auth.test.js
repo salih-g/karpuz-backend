@@ -64,7 +64,7 @@ describe('Auth routes', () => {
 			await request(app)
 				.post('/v1/auth/register')
 				.send(newUser)
-				.expect(httpStatus.INTERNAL_SERVER_ERROR);
+				.expect(httpStatus.BAD_REQUEST);
 		});
 	});
 	describe('POST /v1/auth/login', () => {
