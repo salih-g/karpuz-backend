@@ -5,6 +5,7 @@ module.exports = {
 	port: process.env.PORT || 8081,
 	mongoose: {
 		url: process.env.MONGO_URL,
+		testUrl: process.env.TEST_MONGO_URL,
 		options: {
 			useNewUrlParser: true,
 			useUnifiedTopology: true,

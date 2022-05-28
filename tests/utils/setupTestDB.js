@@ -3,7 +3,7 @@ const config = require('../../src/config');
 
 const setupTestDB = () => {
 	beforeAll(async () => {
-		await mongoose.connect(config.mongoose.url, config.mongoose.options);
+		await mongoose.connect(config.mongoose.testUrl, config.mongoose.options);
 	});
 
 	beforeEach(async () => {
