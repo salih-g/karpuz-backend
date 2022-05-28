@@ -16,12 +16,7 @@ const auth = async (req, res, next) => {
 	}
 
 	if (!token) {
-		return next(
-			new ApiError(
-				httpStatus.UNAUTHORIZED,
-				'Not authorized to access this route',
-			),
-		);
+		return next(new ApiError(httpStatus.UNAUTHORIZED, 'Please authenticate'));
 	}
 
 	try {
@@ -30,19 +25,12 @@ const auth = async (req, res, next) => {
 		const user = await User.findById(sub);
 
 		if (!user)
-			return next(
-				new ApiError(httpStatus.NOT_FOUND, 'User not found with this id'),
-			);
+			return next(new ApiError(httpStatus.UNAUTHORIZED, 'Please authenticate'));
 
 		req.user = user;
 		next();
 	} catch (err) {
-		return next(
-			new ApiError(
-				httpStatus.UNAUTHORIZED,
-				'Not authorized to access this route',
-			),
-		);
+		return next(new ApiError(httpStatus.UNAUTHORIZED, 'Please authenticate'));
 	}
 };
 

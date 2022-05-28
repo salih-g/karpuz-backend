@@ -6,7 +6,7 @@ const config = require('../config');
 const generateToken = (
 	userId,
 	expires,
-	type = 'access',
+	type = config.tokenTypes.ACCESS,
 	secret = config.jwt.secret,
 ) => {
 	const payload = {

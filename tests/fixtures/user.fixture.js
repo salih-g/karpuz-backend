@@ -21,13 +21,6 @@ const userTwo = {
 	role: 'user',
 };
 
-const admin = {
-	_id: mongoose.Types.ObjectId(),
-	username: faker.name.findName().toLocaleLowerCase(),
-	password,
-	role: 'admin',
-};
-
 const insertUsers = async (users) => {
 	await User.insertMany(
 		users.map((user) => ({ ...user, password: hashedPassword })),
@@ -37,6 +30,5 @@ const insertUsers = async (users) => {
 module.exports = {
 	userOne,
 	userTwo,
-	admin,
 	insertUsers,
 };

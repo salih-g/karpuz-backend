@@ -1,10 +1,17 @@
 const request = require('supertest');
+const moment = require('moment');
 const httpStatus = require('http-status');
 const { faker } = require('@faker-js/faker');
+const httpMocks = require('node-mocks-http');
 
 const app = require('../../src/app');
+const config = require('../../src/config');
+const auth = require('../../src/middlewares/auth');
+const ApiError = require('../../src/utils/ApiError');
 const setupTestDB = require('../utils/setupTestDB');
-const { userOne, admin, insertUsers } = require('../fixtures/user.fixture');
+const { tokenService } = require('../../src/services');
+const { userOne, insertUsers } = require('../fixtures/user.fixture');
+const { userOneAccessToken } = require('../fixtures/token.fixture');
 
 const { User } = require('../../src/models');
 
@@ -131,5 +138,117 @@ describe('Auth routes', () => {
 				message: 'Incorrect username or password',
 			});
 		});
+	});
+});
+
+describe('Auth middleware', () => {
+	test('should call next with no errors if access token is valid', async () => {
+		await insertUsers([userOne]);
+		const req = httpMocks.createRequest({
+			headers: { Authorization: `Bearer ${userOneAccessToken}` },
+		});
+		const next = jest.fn();
+
+		await auth(req, httpMocks.createResponse(), next);
+
+		expect(next).toHaveBeenCalledWith();
+		expect(req.user._id).toEqual(userOne._id);
+	});
+
+	test('should call next with no errors if access token is valid', async () => {
+		await insertUsers([userOne]);
+		const req = httpMocks.createRequest({
+			headers: { Authorization: `Bearer ${userOneAccessToken}` },
+		});
+		const next = jest.fn();
+
+		await auth(req, httpMocks.createResponse(), next);
+
+		expect(next).toHaveBeenCalledWith();
+		expect(req.user._id).toEqual(userOne._id);
+	});
+
+	test('should call next with unauthorized error if access token is not a valid jwt token', async () => {
+		await insertUsers([userOne]);
+		const req = httpMocks.createRequest({
+			headers: { Authorization: 'Bearer randomToken' },
+		});
+		const next = jest.fn();
+
+		await auth(req, httpMocks.createResponse(), next);
+
+		expect(next).toHaveBeenCalledWith(expect.any(ApiError));
+		expect(next).toHaveBeenCalledWith(
+			expect.objectContaining({
+				statusCode: httpStatus.UNAUTHORIZED,
+				message: 'Please authenticate',
+			}),
+		);
+	});
+
+	test('should call next with unauthorized error if access token is generated with an invalid secret', async () => {
+		await insertUsers([userOne]);
+		const expires = moment().add(config.jwt.accessExpirationMinutes, 'minutes');
+		const accessToken = tokenService.generateToken(
+			userOne._id,
+			expires,
+			config.tokenTypes.ACCESS,
+			'invalidSecret',
+		);
+		const req = httpMocks.createRequest({
+			headers: { Authorization: `Bearer ${accessToken}` },
+		});
+		const next = jest.fn();
+
+		await auth(req, httpMocks.createResponse(), next);
+
+		expect(next).toHaveBeenCalledWith(expect.any(ApiError));
+		expect(next).toHaveBeenCalledWith(
+			expect.objectContaining({
+				statusCode: httpStatus.UNAUTHORIZED,
+				message: 'Please authenticate',
+			}),
+		);
+	});
+
+	test('should call next with unauthorized error if access token is expired', async () => {
+		await insertUsers([userOne]);
+		const expires = moment().subtract(1, 'minutes');
+		const accessToken = tokenService.generateToken(
+			userOne._id,
+			expires,
+			config.tokenTypes.ACCESS,
+		);
+		const req = httpMocks.createRequest({
+			headers: { Authorization: `Bearer ${accessToken}` },
+		});
+		const next = jest.fn();
+
+		await auth(req, httpMocks.createResponse(), next);
+
+		expect(next).toHaveBeenCalledWith(expect.any(ApiError));
+		expect(next).toHaveBeenCalledWith(
+			expect.objectContaining({
+				statusCode: httpStatus.UNAUTHORIZED,
+				message: 'Please authenticate',
+			}),
+		);
+	});
+
+	test('should call next with unauthorized error if user is not found', async () => {
+		const req = httpMocks.createRequest({
+			headers: { Authorization: `Bearer ${userOneAccessToken}` },
+		});
+		const next = jest.fn();
+
+		await auth(req, httpMocks.createResponse(), next);
+
+		expect(next).toHaveBeenCalledWith(expect.any(ApiError));
+		expect(next).toHaveBeenCalledWith(
+			expect.objectContaining({
+				statusCode: httpStatus.UNAUTHORIZED,
+				message: 'Please authenticate',
+			}),
+		);
 	});
 });
