@@ -11,6 +11,24 @@ const createContent = catchAsync(async (req, res) => {
 	res.status(httpStatus.OK).send(content);
 });
 
+const likeContent = catchAsync(async (req, res) => {
+	const { body: contentBody } = req;
+
+	const content = await contentService.createContent(contentBody);
+
+	res.status(httpStatus.OK).send(content);
+});
+
+const createComment = catchAsync(async (req, res) => {
+	const { body: commentBody } = req;
+
+	const content = await contentService.createComment(commentBody);
+
+	res.status(httpStatus.OK).send(content);
+});
+
 module.exports = {
 	createContent,
+	createComment,
+	likeContent,
 };

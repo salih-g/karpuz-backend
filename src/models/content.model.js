@@ -7,11 +7,14 @@ const commentSchema = mongoose.Schema(
 			required: true,
 			maxlength: 240,
 		},
-		commentUser: {
+		contentId: {
 			type: String,
 			required: true,
 		},
-		likes: [],
+		username: {
+			type: String,
+			required: true,
+		},
 	},
 	{
 		timestamps: true,
@@ -31,6 +34,7 @@ const contentSchema = mongoose.Schema(
 			required: true,
 		},
 		comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
+		likes: [],
 	},
 	{
 		timestamps: true,
