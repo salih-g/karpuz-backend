@@ -1,5 +1,24 @@
 const mongoose = require('mongoose');
 
+const commentSchema = mongoose.Schema(
+	{
+		comment: {
+			type: String,
+			required: true,
+			maxlength: 240,
+		},
+		commentUser: {
+			type: String,
+			required: true,
+		},
+		likes: [],
+	},
+	{
+		timestamps: true,
+		versionKey: false,
+	},
+);
+
 const contentSchema = mongoose.Schema(
 	{
 		post: {
@@ -7,28 +26,11 @@ const contentSchema = mongoose.Schema(
 			required: true,
 			maxlength: 240,
 		},
-		comments: [
-			{
-				type: mongoose.Schema(
-					{
-						comment: String,
-						commentUser: String,
-						maxlength: 240,
-						likes: [
-							{
-								type: mongoose.Schema({
-									likedUsername: String,
-								}),
-							},
-						],
-					},
-					{
-						timestamps: true,
-						versionKey: false,
-					},
-				),
-			},
-		],
+		username: {
+			type: String,
+			required: true,
+		},
+		comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
 	},
 	{
 		timestamps: true,
@@ -37,5 +39,9 @@ const contentSchema = mongoose.Schema(
 );
 
 const Content = mongoose.model('Content', contentSchema);
+const Comment = mongoose.model('Comment', commentSchema);
 
-module.exports = Content;
+module.exports = {
+	Content,
+	Comment,
+};
