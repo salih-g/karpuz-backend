@@ -1,17 +1,9 @@
 const request = require('supertest');
-const moment = require('moment');
 const httpStatus = require('http-status');
 const { faker } = require('@faker-js/faker');
-const httpMocks = require('node-mocks-http');
 
 const app = require('../../src/app');
-const config = require('../../src/config');
-const auth = require('../../src/middlewares/auth');
-const ApiError = require('../../src/utils/ApiError');
 const setupTestDB = require('../utils/setupTestDB');
-const { tokenService } = require('../../src/services');
-const { userOne, insertUsers } = require('../fixtures/user.fixture');
-const { userOneAccessToken } = require('../fixtures/token.fixture');
 
 const { Content } = require('../../src/models');
 
@@ -19,9 +11,9 @@ setupTestDB();
 
 describe('Content routes', () => {
 	describe('POST /v1/content/create', () => {
-		let newPost;
+		let newBody;
 		beforeEach(() => {
-			newPost = {
+			newBody = {
 				post: 'test12',
 				username: faker.name.findName().toLocaleLowerCase(),
 			};
@@ -30,12 +22,12 @@ describe('Content routes', () => {
 		test('should return 201 and successfully create content with expected body', async () => {
 			const res = await request(app)
 				.post('/v1/content/create')
-				.send(newPost)
+				.send(newBody)
 				.expect(httpStatus.CREATED);
 
 			expect(res.body).toEqual({
 				post: 'test12',
-				username: newPost.username,
+				username: newBody.username,
 				comments: [],
 				likes: [],
 				_id: expect.anything(),
@@ -47,7 +39,7 @@ describe('Content routes', () => {
 			expect(content).toBeDefined();
 			expect(content).toMatchObject({
 				post: 'test12',
-				username: newPost.username,
+				username: newBody.username,
 				comments: [],
 				likes: [],
 				_id: expect.anything(),
@@ -57,18 +49,113 @@ describe('Content routes', () => {
 		});
 
 		test('should return 400 and doesnt create content without post field ', async () => {
-			newPost.post = undefined;
+			newBody.post = undefined;
 			await request(app)
 				.post('/v1/content/create')
-				.send(newPost)
+				.send(newBody)
 				.expect(httpStatus.BAD_REQUEST);
 		});
 
 		test('should return 400 and doesnt create content without username field ', async () => {
-			newPost.username = undefined;
+			newBody.username = undefined;
 			await request(app)
 				.post('/v1/content/create')
-				.send(newPost)
+				.send(newBody)
+				.expect(httpStatus.BAD_REQUEST);
+		});
+	});
+
+	describe('PUT /v1/content/like', () => {
+		let newBody;
+		const postBody = {
+			post: 'test12',
+			username: faker.name.findName().toLocaleLowerCase(),
+		};
+
+		beforeEach(async () => {
+			const response = await request(app)
+				.post('/v1/content/create')
+				.send(postBody)
+				.expect(httpStatus.CREATED);
+			newBody = {
+				contentId: response.body._id,
+				username: faker.name.findName().toLocaleLowerCase(),
+			};
+		});
+
+		test('should return 201 and successfully like/dislike content', async () => {
+			//Like
+			const like = await request(app)
+				.put('/v1/content/like')
+				.send(newBody)
+				.expect(httpStatus.OK);
+
+			expect(like.body).toEqual({
+				username: postBody.username,
+				post: postBody.post,
+				comments: [],
+				likes: [newBody.username],
+				_id: expect.anything(),
+				createdAt: expect.anything(),
+				updatedAt: expect.anything(),
+			});
+
+			const content = await Content.findById(like.body._id);
+			expect(content).toBeDefined();
+			expect(content).toMatchObject({
+				post: postBody.post,
+				username: postBody.username,
+				comments: [],
+				likes: [newBody.username],
+				_id: expect.anything(),
+				createdAt: expect.anything(),
+				updatedAt: expect.anything(),
+			});
+
+			//Dislike
+			const dislike = await request(app)
+				.put('/v1/content/like')
+				.send(newBody)
+				.expect(httpStatus.OK);
+
+			expect(dislike.body).toEqual({
+				username: postBody.username,
+				post: postBody.post,
+				comments: [],
+				likes: [],
+				_id: expect.anything(),
+				createdAt: expect.anything(),
+				updatedAt: expect.anything(),
+			});
+
+			const contentDislike = await Content.findById(dislike.body._id);
+			expect(contentDislike).toBeDefined();
+			expect(contentDislike).toMatchObject({
+				post: postBody.post,
+				username: postBody.username,
+				comments: [],
+				likes: [],
+				_id: expect.anything(),
+				createdAt: expect.anything(),
+				updatedAt: expect.anything(),
+			});
+		});
+
+		test('should return 400 without username', async () => {
+			newBody.username = undefined;
+			const res = await request(app)
+				.put('/v1/content/like')
+				.send(newBody)
+				.expect(httpStatus.BAD_REQUEST);
+
+			expect(res.body.message).toBe('You need username for like/dislike');
+		});
+
+		test('should return 400 with empty contentId', async () => {
+			newBody.contentId = 'undefined';
+			const res = await request(app)
+				.put('/v1/content/like')
+				.send(newBody)
 				.expect(httpStatus.BAD_REQUEST);
 		});
 	});

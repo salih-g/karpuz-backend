@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 
 const { contentService } = require('../services');
+const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 
 const createContent = catchAsync(async (req, res) => {
@@ -11,8 +12,17 @@ const createContent = catchAsync(async (req, res) => {
 	res.status(httpStatus.CREATED).send(content);
 });
 
-const likeContent = catchAsync(async (req, res) => {
+const likeContent = catchAsync(async (req, res, next) => {
 	const { body: likeBody } = req;
+
+	if (!likeBody.username) {
+		return next(
+			new ApiError(
+				httpStatus.BAD_REQUEST,
+				'You need username for like/dislike',
+			),
+		);
+	}
 
 	const content = await contentService.likeContent(likeBody);
 

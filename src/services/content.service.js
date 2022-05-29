@@ -10,10 +10,16 @@ const likeContent = async (likeBody) => {
 
 	if (!content.likes.includes(likeBody.username)) {
 		await content.updateOne({ $push: { likes: likeBody.username } });
-		return await Content.findById(likeBody.contentId);
+		return await Content.findById(likeBody.contentId).populate({
+			path: 'comments',
+			sort: { createdAt: 1 },
+		});
 	} else {
 		await content.updateOne({ $pull: { likes: likeBody.username } });
-		return await Content.findById(likeBody.contentId);
+		return await Content.findById(likeBody.contentId).populate({
+			path: 'comments',
+			sort: { createdAt: 1 },
+		});
 	}
 };
 
