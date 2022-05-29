@@ -8,13 +8,13 @@ const createContent = catchAsync(async (req, res) => {
 
 	const content = await contentService.createContent(contentBody);
 
-	res.status(httpStatus.OK).send(content);
+	res.status(httpStatus.CREATED).send(content);
 });
 
 const likeContent = catchAsync(async (req, res) => {
-	const { body: contentBody } = req;
+	const { body: likeBody } = req;
 
-	const content = await contentService.createContent(contentBody);
+	const content = await contentService.likeContent(likeBody);
 
 	res.status(httpStatus.OK).send(content);
 });
@@ -24,7 +24,7 @@ const createComment = catchAsync(async (req, res) => {
 
 	const content = await contentService.createComment(commentBody);
 
-	res.status(httpStatus.OK).send(content);
+	res.status(httpStatus.CREATED).send(content);
 });
 
 module.exports = {

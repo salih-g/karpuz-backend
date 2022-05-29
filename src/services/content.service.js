@@ -5,6 +5,18 @@ const createContent = async (contentBody) => {
 	return await Content.create(contentBody);
 };
 
+const likeContent = async (likeBody) => {
+	const content = await Content.findById(likeBody.contentId);
+
+	if (!content.likes.includes(likeBody.username)) {
+		await content.updateOne({ $push: { likes: likeBody.username } });
+		return await Content.findById(likeBody.contentId);
+	} else {
+		await content.updateOne({ $pull: { likes: likeBody.username } });
+		return await Content.findById(likeBody.contentId);
+	}
+};
+
 const createComment = async (commentBody) => {
 	const newComment = new Comment({ _id: new Types.ObjectId(), ...commentBody });
 
@@ -22,4 +34,5 @@ const createComment = async (commentBody) => {
 module.exports = {
 	createContent,
 	createComment,
+	likeContent,
 };
