@@ -159,4 +159,31 @@ describe('Content routes', () => {
 				.expect(httpStatus.BAD_REQUEST);
 		});
 	});
+
+	describe('POST /v1/content/comments/create', () => {});
 });
+
+// {
+// 	"comment": "deneme12",
+// 	"contentId": "629373bdd155cf2e3ce18653",
+// 	"username": "sudanmerinosu"
+// }
+
+// {
+// 	"_id": "629373bdd155cf2e3ce18653",
+// 	"post": "deneme12",
+// 	"username": "sudanmerinosu",
+// 	"comments": [
+// 		{
+// 			"_id": "629373c5d155cf2e3ce18655",
+// 			"comment": "deneme12",
+// 			"contentId": "629373bdd155cf2e3ce18653",
+// 			"username": "sudanmerinosu",
+// 			"createdAt": "2022-05-29T13:23:17.169Z",
+// 			"updatedAt": "2022-05-29T13:23:17.169Z"
+// 		}
+// 	],
+// 	"likes": [],
+// 	"createdAt": "2022-05-29T13:23:09.318Z",
+// 	"updatedAt": "2022-05-29T13:23:17.190Z"
+// }
