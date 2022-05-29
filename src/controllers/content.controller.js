@@ -1,13 +1,16 @@
 const httpStatus = require('http-status');
 
-const { templateService } = require('../services');
+const { contentService } = require('../services');
+const catchAsync = require('../utils/catchAsync');
 
-const hello = async (req, res) => {
-	const message = await templateService.getMessage();
+const createContent = catchAsync(async (req, res) => {
+	const { body: contentBody } = req;
 
-	res.status(httpStatus.OK).send(message);
-};
+	const content = await contentService.createContent(contentBody);
+
+	res.status(httpStatus.OK).send(content);
+});
 
 module.exports = {
-	hello,
+	createContent,
 };
