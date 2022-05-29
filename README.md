@@ -2,5 +2,4 @@
 
 ### Todo
 
-    - [x] Add validation to content route
-    - [x] Add auth middleware to content route
+    - [ ] Add content test to auth

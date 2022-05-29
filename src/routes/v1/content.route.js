@@ -10,7 +10,7 @@ const router = express.Router();
 router.post(
 	'/create',
 	auth,
-	validate(contentValidation.createComment),
+	validate(contentValidation.createContent),
 	contentController.createContent,
 );
 router.put(

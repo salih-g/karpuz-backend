@@ -6,13 +6,16 @@ const app = require('../../src/app');
 const setupTestDB = require('../utils/setupTestDB');
 
 const { Content } = require('../../src/models');
+const { insertUsers, userOne } = require('../fixtures/user.fixture');
+const { userOneAccessToken } = require('../fixtures/token.fixture');
 
 setupTestDB();
 
 describe('Content routes', () => {
 	describe('POST /v1/content/create', () => {
 		let newBody;
-		beforeEach(() => {
+		beforeEach(async () => {
+			await insertUsers([userOne]);
 			newBody = {
 				post: 'test12',
 				username: faker.name.findName().toLocaleLowerCase(),
@@ -22,6 +25,7 @@ describe('Content routes', () => {
 		test('should return 201 and successfully create content with expected body', async () => {
 			const res = await request(app)
 				.post('/v1/content/create')
+				.set({ Authorization: `Bearer ${userOneAccessToken}` })
 				.send(newBody)
 				.expect(httpStatus.CREATED);
 
@@ -52,6 +56,7 @@ describe('Content routes', () => {
 			newBody.post = undefined;
 			await request(app)
 				.post('/v1/content/create')
+				.set({ Authorization: `Bearer ${userOneAccessToken}` })
 				.send(newBody)
 				.expect(httpStatus.BAD_REQUEST);
 		});
@@ -60,6 +65,7 @@ describe('Content routes', () => {
 			newBody.username = undefined;
 			await request(app)
 				.post('/v1/content/create')
+				.set({ Authorization: `Bearer ${userOneAccessToken}` })
 				.send(newBody)
 				.expect(httpStatus.BAD_REQUEST);
 		});
@@ -73,8 +79,10 @@ describe('Content routes', () => {
 		};
 
 		beforeEach(async () => {
+			await insertUsers([userOne]);
 			const response = await request(app)
 				.post('/v1/content/create')
+				.set({ Authorization: `Bearer ${userOneAccessToken}` })
 				.send(postBody)
 				.expect(httpStatus.CREATED);
 			newBody = {
@@ -87,6 +95,7 @@ describe('Content routes', () => {
 			//Like
 			const like = await request(app)
 				.put('/v1/content/like')
+				.set({ Authorization: `Bearer ${userOneAccessToken}` })
 				.send(newBody)
 				.expect(httpStatus.OK);
 
@@ -115,6 +124,7 @@ describe('Content routes', () => {
 			//Dislike
 			const dislike = await request(app)
 				.put('/v1/content/like')
+				.set({ Authorization: `Bearer ${userOneAccessToken}` })
 				.send(newBody)
 				.expect(httpStatus.OK);
 
@@ -145,16 +155,18 @@ describe('Content routes', () => {
 			newBody.username = undefined;
 			const res = await request(app)
 				.put('/v1/content/like')
+				.set({ Authorization: `Bearer ${userOneAccessToken}` })
 				.send(newBody)
 				.expect(httpStatus.BAD_REQUEST);
 
-			expect(res.body.message).toBe('You need username for like/dislike');
+			expect(res.body.message).toBe('"username" is required');
 		});
 
 		test('should return 400 with empty contentId', async () => {
 			newBody.contentId = 'undefined';
 			const res = await request(app)
 				.put('/v1/content/like')
+				.set({ Authorization: `Bearer ${userOneAccessToken}` })
 				.send(newBody)
 				.expect(httpStatus.BAD_REQUEST);
 		});
