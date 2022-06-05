@@ -11,7 +11,7 @@ const { userOneAccessToken } = require('../fixtures/token.fixture');
 
 setupTestDB();
 
-describe('Content routes', () => {
+describe('Content POST routes', () => {
 	describe('POST /v1/content/create', () => {
 		let newBody;
 		beforeEach(async () => {
@@ -71,6 +71,10 @@ describe('Content routes', () => {
 		});
 	});
 
+	describe('POST /v1/content/comments/create', () => {});
+});
+
+describe('Content PUT routes', () => {
 	describe('PUT /v1/content/like', () => {
 		let newBody;
 		const postBody = {
@@ -171,31 +175,47 @@ describe('Content routes', () => {
 				.expect(httpStatus.BAD_REQUEST);
 		});
 	});
-
-	describe('POST /v1/content/comments/create', () => {});
 });
 
-// {
-// 	"comment": "deneme12",
-// 	"contentId": "629373bdd155cf2e3ce18653",
-// 	"username": "sudanmerinosu"
-// }
+describe('Content GET routes', () => {
+	describe('POST /v1/content/paginated?page=x&limit=y', () => {
+		beforeEach(async () => {
+			await insertUsers([userOne]);
+			for (let index = 0; index < 10; index++) {
+				await request(app)
+					.post('/v1/content/create')
+					.set({ Authorization: `Bearer ${userOneAccessToken}` })
+					.send({
+						username: faker.name.findName().toLocaleLowerCase(),
+						post: `post ${index + 1}`,
+					});
+			}
+		});
+		test('should return 200 and successfully get page 1 and 5 content', async () => {
+			const res = await request(app)
+				.get('/v1/content/paginated?page=1&limit=5')
+				.expect(httpStatus.OK);
 
-// {
-// 	"_id": "629373bdd155cf2e3ce18653",
-// 	"post": "deneme12",
-// 	"username": "sudanmerinosu",
-// 	"comments": [
-// 		{
-// 			"_id": "629373c5d155cf2e3ce18655",
-// 			"comment": "deneme12",
-// 			"contentId": "629373bdd155cf2e3ce18653",
-// 			"username": "sudanmerinosu",
-// 			"createdAt": "2022-05-29T13:23:17.169Z",
-// 			"updatedAt": "2022-05-29T13:23:17.169Z"
-// 		}
-// 	],
-// 	"likes": [],
-// 	"createdAt": "2022-05-29T13:23:09.318Z",
-// 	"updatedAt": "2022-05-29T13:23:17.190Z"
-// }
+			expect(res.body[0].post).toBe('post 1');
+			expect(res.body[4].post).toBe('post 5');
+			expect(res.body.length).toBe(5);
+		});
+
+		test('should return 200 and successfully gets all contents without page and limit', async () => {
+			const res = await request(app)
+				.get('/v1/content/paginated')
+				.expect(httpStatus.OK);
+
+			expect(res.body.length).toBe(10);
+		});
+
+		test('should return 200 and successfully gets page 2 contents', async () => {
+			const res = await request(app)
+				.get('/v1/content/paginated?page=2&limit=5')
+				.expect(httpStatus.OK);
+
+			expect(res.body[0].post).toBe('post 6');
+			expect(res.body[4].post).toBe('post 10');
+		});
+	});
+});
