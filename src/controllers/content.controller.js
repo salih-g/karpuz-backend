@@ -37,8 +37,16 @@ const createComment = catchAsync(async (req, res) => {
 	res.status(httpStatus.CREATED).send(content);
 });
 
+const getPaginated = catchAsync(async (req, res) => {
+	const page = parseInt(req.query.page);
+	const limit = parseInt(req.query.limit);
+	const contents = await contentService.getPaginatedContents(page, limit);
+	res.status(httpStatus.OK).send(contents);
+});
+
 module.exports = {
 	createContent,
 	createComment,
 	likeContent,
+	getPaginated,
 };

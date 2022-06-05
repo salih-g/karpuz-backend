@@ -40,6 +40,7 @@
     ```
 
 - PUT
+
   - /v1/content/like | Like content
     ```json
     //Example body
@@ -48,3 +49,6 @@
     	"contentId": "629373bdd155cf2e3ce18653",
     }
     ```
+
+- GET
+  - /v1/content/paginated?page=1&limit=5

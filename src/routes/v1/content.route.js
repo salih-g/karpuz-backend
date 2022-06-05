@@ -13,17 +13,21 @@ router.post(
 	validate(contentValidation.createContent),
 	contentController.createContent,
 );
-router.put(
-	'/like',
-	auth,
-	validate(contentValidation.likeContent),
-	contentController.likeContent,
-);
+
 router.post(
 	'/comment/create/',
 	auth,
 	validate(contentValidation.createComment),
 	contentController.createComment,
 );
+
+router.put(
+	'/like',
+	auth,
+	validate(contentValidation.likeContent),
+	contentController.likeContent,
+);
+
+router.get('/paginated', contentController.getPaginated);
 
 module.exports = router;

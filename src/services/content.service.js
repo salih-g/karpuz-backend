@@ -37,8 +37,38 @@ const createComment = async (commentBody) => {
 	});
 };
 
+const getPaginatedContents = async (page, limit) => {
+	const startIndex = (page - 1) * limit;
+	const endIndex = page * limit;
+	const results = {};
+
+	const contentLength = await Content.countDocuments();
+
+	if (endIndex < contentLength) {
+		results.next = {
+			page: page + 1,
+			limit,
+		};
+	}
+	if (startIndex > 0) {
+		results.previous = {
+			page: page - 1,
+			limit,
+		};
+	}
+
+	return await Content.find()
+		.populate({
+			path: 'comments',
+			sort: { createdAt: 1 },
+		})
+		.limit(limit)
+		.skip(startIndex);
+};
+
 module.exports = {
 	createContent,
 	createComment,
 	likeContent,
+	getPaginatedContents,
 };
