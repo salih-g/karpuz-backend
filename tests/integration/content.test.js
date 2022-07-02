@@ -196,8 +196,8 @@ describe('Content GET routes', () => {
 				.get('/v1/content/paginated?page=1&limit=5')
 				.expect(httpStatus.OK);
 
-			expect(res.body[0].post).toBe('post 1');
-			expect(res.body[4].post).toBe('post 5');
+			expect(res.body[0].post).toBe('post 10');
+			expect(res.body[4].post).toBe('post 6');
 			expect(res.body.length).toBe(5);
 		});
 
@@ -214,8 +214,8 @@ describe('Content GET routes', () => {
 				.get('/v1/content/paginated?page=2&limit=5')
 				.expect(httpStatus.OK);
 
-			expect(res.body[0].post).toBe('post 6');
-			expect(res.body[4].post).toBe('post 10');
+			expect(res.body[0].post).toBe('post 5');
+			expect(res.body[4].post).toBe('post 1');
 		});
 	});
 });
