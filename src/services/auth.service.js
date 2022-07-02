@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 
 const userService = require('./user.service');
-const ApiError = require('../utils/ApiError');
+const ApiError = require('../utils/apiError');
 
 const login = async (username, password) => {
 	const user = await userService.getUserByUsername(username);

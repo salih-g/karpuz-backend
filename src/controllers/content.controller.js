@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 
 const { contentService } = require('../services');
-const ApiError = require('../utils/ApiError');
+const ApiError = require('../utils/apiError');
 const catchAsync = require('../utils/catchAsync');
 
 const createContent = catchAsync(async (req, res) => {

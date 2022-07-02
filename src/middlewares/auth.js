@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 
 const { verifyToken } = require('../services/token.service');
-const ApiError = require('../utils/ApiError');
+const ApiError = require('../utils/apiError');
 
 const { User } = require('../models/index');
 
