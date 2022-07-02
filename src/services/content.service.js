@@ -58,6 +58,7 @@ const getPaginatedContents = async (page, limit) => {
 	}
 
 	return await Content.find()
+		.sort({ createdAt: -1 })
 		.populate({
 			path: 'comments',
 			sort: { createdAt: 1 },
