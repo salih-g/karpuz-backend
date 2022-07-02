@@ -53,7 +53,7 @@ describe('Auth routes', () => {
 			});
 
 			expect(res.body.tokens).toEqual({
-				access: { token: expect.anything(), expires: expect.anything() },
+				token: expect.anything(),
 			});
 		});
 
@@ -97,7 +97,7 @@ describe('Auth routes', () => {
 			});
 
 			expect(res.body.tokens).toEqual({
-				access: { token: expect.anything(), expires: expect.anything() },
+				token: expect.anything(),
 			});
 		});
 

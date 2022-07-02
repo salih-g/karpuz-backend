@@ -26,10 +26,7 @@ const generateAuthTokens = async (user) => {
 	const accessToken = generateToken(user.id, accessTokenExpires);
 
 	return {
-		access: {
-			token: accessToken,
-			expires: accessTokenExpires.toDate(),
-		},
+		token: accessToken,
 	};
 };
 
