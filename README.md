@@ -21,7 +21,7 @@
 
 - POST
 
-  - /v1/content/create | Create content
+  - /v1/content/create | Create content Need auth
     ```json
     //Example body
     {
@@ -29,7 +29,7 @@
     	"post": "test post",
     }
     ```
-  - /v1/content/comment/create | Create comment
+  - /v1/content/comment/create | Create comment Need auth
     ```json
     //Example body
     {
@@ -41,7 +41,7 @@
 
 - PUT
 
-  - /v1/content/like | Like content
+  - /v1/content/like | Like content need Auth
     ```json
     //Example body
     {
