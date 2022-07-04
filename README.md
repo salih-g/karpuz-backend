@@ -19,6 +19,10 @@
 
 ### Content
 
+- GET
+
+  - /v1/content/:id | Get content by id
+
 - POST
 
   - /v1/content/create | Create content Need auth

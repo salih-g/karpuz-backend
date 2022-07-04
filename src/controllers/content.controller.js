@@ -44,9 +44,17 @@ const getPaginated = catchAsync(async (req, res) => {
 	res.status(httpStatus.OK).send(contents);
 });
 
+const getContentById = catchAsync(async (req, res) => {
+	const { id: contentId } = req.params;
+
+	const contents = await contentService.getContentById(contentId);
+	res.status(httpStatus.OK).send(contents);
+});
+
 module.exports = {
 	createContent,
 	createComment,
 	likeContent,
 	getPaginated,
+	getContentById,
 };

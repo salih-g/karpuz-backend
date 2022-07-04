@@ -67,9 +67,16 @@ const getPaginatedContents = async (page, limit) => {
 		.skip(startIndex);
 };
 
+const getContentById = async (contentId) => {
+	return await Content.findById(contentId).populate({
+		path: 'comments',
+		sort: { createdAt: 1 },
+	});
+};
 module.exports = {
 	createContent,
 	createComment,
 	likeContent,
 	getPaginatedContents,
+	getContentById,
 };

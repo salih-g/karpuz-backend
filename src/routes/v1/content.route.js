@@ -30,4 +30,6 @@ router.put(
 
 router.get('/paginated', contentController.getPaginated);
 
+router.get('/:id', contentController.getContentById);
+
 module.exports = router;
