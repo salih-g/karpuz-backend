@@ -22,6 +22,7 @@
 - GET
 
   - /v1/content/:id | Get content by id
+  - /v1/content/:username | Get users contents with username
 
 - POST
 

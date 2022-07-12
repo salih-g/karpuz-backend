@@ -73,10 +73,21 @@ const getContentById = async (contentId) => {
 		sort: { createdAt: 1 },
 	});
 };
+
+const getContentsWithUsername = async (username) => {
+	return await Content.find({
+		username: username,
+	}).populate({
+		path: 'comments',
+		sort: { createdAt: 1 },
+	});
+};
+
 module.exports = {
 	createContent,
 	createComment,
 	likeContent,
 	getPaginatedContents,
 	getContentById,
+	getContentsWithUsername,
 };

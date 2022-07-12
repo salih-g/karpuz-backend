@@ -31,5 +31,6 @@ router.put(
 router.get('/paginated', contentController.getPaginated);
 
 router.get('/:id', contentController.getContentById);
+router.get('/user/:username', contentController.getContentsWithUsername);
 
 module.exports = router;

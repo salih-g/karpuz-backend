@@ -51,10 +51,18 @@ const getContentById = catchAsync(async (req, res) => {
 	res.status(httpStatus.OK).send(contents);
 });
 
+const getContentsWithUsername = catchAsync(async (req, res) => {
+	const { username } = req.params;
+
+	const contents = await contentService.getContentsWithUsername(username);
+	res.status(httpStatus.OK).send(contents);
+});
+
 module.exports = {
 	createContent,
 	createComment,
 	likeContent,
 	getPaginated,
 	getContentById,
+	getContentsWithUsername,
 };
