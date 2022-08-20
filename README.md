@@ -63,3 +63,9 @@
 
 - GET
   - /v1/content/paginated?page=1&limit=5
+
+Reminder
+
+```bash
+npx prisma db push
+```

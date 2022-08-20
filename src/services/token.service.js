@@ -17,11 +17,7 @@ const generateToken = (
 };
 
 const generateAuthTokens = async (user) => {
-	const accessToken = generateToken(user.id);
-
-	return {
-		token: accessToken,
-	};
+	return generateToken(user.id);
 };
 
 const verifyToken = async (token) => await jwt.verify(token, config.jwt.secret);

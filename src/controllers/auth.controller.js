@@ -1,14 +1,29 @@
 const httpStatus = require('http-status');
+const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcryptjs');
+const ApiError = require('../utils/apiError');
+
+const prisma = new PrismaClient();
 
 const catchAsync = require('../utils/catchAsync');
-const { userService, tokenService, authService } = require('../services');
+const { tokenService, authService } = require('../services');
 
 const register = catchAsync(async (req, res) => {
-	const user = await userService.createUser(req.body);
-	const tokens = await tokenService.generateAuthTokens(user);
+	const userBody = req.body;
+	userBody.password = await bcrypt.hash(userBody.password, 8);
 
-	user.password = undefined;
-	res.status(httpStatus.CREATED).send({ user, tokens });
+	try {
+		const user = await prisma.user.create({
+			data: userBody,
+		});
+
+		user.token = await tokenService.generateAuthTokens(user);
+		res.status(httpStatus.CREATED).send({ user });
+	} catch (error) {
+		if (error.code === 'P2002') {
+			throw new ApiError(httpStatus.BAD_REQUEST, 'This username was taken');
+		}
+	}
 });
 
 const login = catchAsync(async (req, res) => {
