@@ -21,12 +21,7 @@ router.post(
 	contentController.createComment,
 );
 
-router.put(
-	'/like',
-	auth,
-	validate(contentValidation.likeContent),
-	contentController.likeContent,
-);
+router.put('/likePost', auth, contentController.likePost);
 
 router.get('/paginated', contentController.getPaginated);
 router.get('/test', contentController.test);

@@ -23,21 +23,37 @@ const createContent = catchAsync(async (req, res) => {
 	}
 });
 
-const likeContent = catchAsync(async (req, res, next) => {
-	const { body: likeBody } = req;
+const likePost = catchAsync(async (req, res, next) => {
+	const { postId, userId } = req.body;
 
-	if (!likeBody.username) {
+	if (!postId) {
 		return next(
-			new ApiError(
-				httpStatus.BAD_REQUEST,
-				'You need username for like/dislike',
-			),
+			new ApiError(httpStatus.BAD_REQUEST, 'You need postId for like/dislike'),
 		);
 	}
 
-	const content = await contentService.likeContent(likeBody);
+	try {
+		const like = await prisma.postLike.findUnique({
+			where: {
+				id: postId,
+			},
+		});
 
-	res.status(httpStatus.OK).send(content);
+		if (like == null) {
+			await prisma.postLike.create({
+				data: { id: postId, postId, userId },
+			});
+			res.status(httpStatus.OK).send({ message: 'liked' });
+		} else {
+			await prisma.postLike.delete({ where: { id: postId } });
+			res.status(httpStatus.OK).send({ message: 'disliked' });
+		}
+	} catch (error) {
+		throw new ApiError(
+			httpStatus.INTERNAL_SERVER_ERROR,
+			error.message || error,
+		);
+	}
 });
 
 const createComment = catchAsync(async (req, res) => {
@@ -73,7 +89,8 @@ const test = catchAsync(async (req, res) => {
 	const resp = await prisma.user.findMany({
 		select: {
 			username: true,
-			likes: true,
+			commentLikes: true,
+			postLikes: true,
 			posts: true,
 			comments: true,
 		},
@@ -84,7 +101,7 @@ const test = catchAsync(async (req, res) => {
 module.exports = {
 	createContent,
 	createComment,
-	likeContent,
+	likePost,
 	getPaginated,
 	getContentById,
 	getContentsWithUsername,

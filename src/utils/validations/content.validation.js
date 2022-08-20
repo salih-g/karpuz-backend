@@ -7,13 +7,6 @@ const createContent = {
 	}),
 };
 
-const likeContent = {
-	body: Joi.object().keys({
-		username: Joi.string().required(),
-		contentId: Joi.string().required(),
-	}),
-};
-
 const createComment = {
 	body: Joi.object().keys({
 		username: Joi.string().required(),
@@ -24,6 +17,5 @@ const createComment = {
 
 module.exports = {
 	createContent,
-	likeContent,
 	createComment,
 };
