@@ -7,7 +7,6 @@ const prisma = new PrismaClient();
 
 const catchAsync = require('../utils/catchAsync');
 const { tokenService } = require('../services');
-const { User } = require('../models');
 
 const register = catchAsync(async (req, res) => {
 	const userBody = req.body;

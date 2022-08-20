@@ -15,18 +15,6 @@
 		"test:watch": "jest -i --watchAll",
 		"coverage": "jest -i --coverage"
 	},
-	"keywords": [
-		"node",
-		"node.js",
-		"boilerplate",
-		"express",
-		"Docker",
-		"rest",
-		"api",
-		"mongodb",
-		"mongoose",
-		"jest"
-	],
 	"dependencies": {
 		"@prisma/client": "4.2.1",
 		"bcryptjs": "^2.4.3",
