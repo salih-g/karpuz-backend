@@ -27,6 +27,6 @@ router.get('/', contentController.getAllContent);
 router.get('/test', contentController.test);
 
 router.get('/:id', contentController.getContentById);
-router.get('/user/:username', contentController.getContentsWithUsername);
+router.get('/user/:userId', contentController.getContentsWithUsername);
 
 module.exports = router;

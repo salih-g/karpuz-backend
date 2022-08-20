@@ -135,9 +135,17 @@ const getContentById = catchAsync(async (req, res) => {
 });
 
 const getContentsWithUsername = catchAsync(async (req, res) => {
-	const { username } = req.params;
+	const { userId } = req.params;
 
-	const contents = await contentService.getContentsWithUsername(username);
+	const contents = await prisma.user.findUnique({
+		where: { id: userId },
+		select: {
+			id: true,
+			username: true,
+			role: true,
+			posts: { include: { comments: true, postLikes: true } },
+		},
+	});
 	res.status(httpStatus.OK).send(contents);
 });
 
