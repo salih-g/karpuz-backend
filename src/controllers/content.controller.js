@@ -83,10 +83,23 @@ const getPaginated = catchAsync(async (req, res) => {
 });
 
 const getContentById = catchAsync(async (req, res) => {
-	const { id: contentId } = req.params;
+	const { id: postId } = req.params;
 
-	const contents = await contentService.getContentById(contentId);
-	res.status(httpStatus.OK).send(contents);
+	try {
+		const contents = await prisma.post.findUnique({
+			where: { id: postId },
+			include: {
+				comments: true,
+				postLikes: true,
+			},
+		});
+		res.status(httpStatus.OK).send(contents);
+	} catch (error) {
+		throw new ApiError(
+			httpStatus.INTERNAL_SERVER_ERROR,
+			error.message || error,
+		);
+	}
 });
 
 const getContentsWithUsername = catchAsync(async (req, res) => {
