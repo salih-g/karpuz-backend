@@ -23,7 +23,7 @@ router.post(
 
 router.put('/likePost', auth, contentController.likePost);
 
-router.get('/paginated', contentController.getPaginated);
+router.get('/', contentController.getAllContent);
 router.get('/test', contentController.test);
 
 router.get('/:id', contentController.getContentById);

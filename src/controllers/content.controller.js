@@ -75,11 +75,43 @@ const createComment = catchAsync(async (req, res) => {
 	}
 });
 
-const getPaginated = catchAsync(async (req, res) => {
+const getAllContent = catchAsync(async (req, res) => {
 	const page = parseInt(req.query.page);
 	const limit = parseInt(req.query.limit);
-	const contents = await contentService.getPaginatedContents(page, limit);
-	res.status(httpStatus.OK).send(contents);
+	const startIndex = (page - 1) * limit;
+	const endIndex = page * limit;
+	const results = {};
+
+	try {
+		const contentLength = await prisma.post.count();
+
+		if (endIndex < contentLength) {
+			results.next = {
+				page: page + 1,
+				limit,
+			};
+		}
+		if (startIndex > 0) {
+			results.previous = {
+				page: page - 1,
+				limit,
+			};
+		}
+
+		const posts = await prisma.post.findMany({
+			include: { comments: true, postLikes: true },
+			orderBy: {
+				createdAt: 'desc',
+			},
+		});
+
+		res.status(httpStatus.OK).send(posts);
+	} catch (error) {
+		throw new ApiError(
+			httpStatus.INTERNAL_SERVER_ERROR,
+			error.message || error,
+		);
+	}
 });
 
 const getContentById = catchAsync(async (req, res) => {
@@ -126,7 +158,7 @@ module.exports = {
 	createContent,
 	createComment,
 	likePost,
-	getPaginated,
+	getAllContent,
 	getContentById,
 	getContentsWithUsername,
 	test,
