@@ -1,9 +1,8 @@
 const httpStatus = require('http-status');
-const { PrismaClient } = require('@prisma/client');
 
+const prisma = require('../prisma');
 const ApiError = require('../utils/apiError');
 const catchAsync = require('../utils/catchAsync');
-const prisma = new PrismaClient();
 
 const createContent = catchAsync(async (req, res) => {
 	const { body: contentBody } = req;

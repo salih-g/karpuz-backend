@@ -1,9 +1,7 @@
 const httpStatus = require('http-status');
-const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
+const prisma = require('../prisma');
 const ApiError = require('../utils/apiError');
-
-const prisma = new PrismaClient();
 
 const catchAsync = require('../utils/catchAsync');
 const { tokenService } = require('../services');
