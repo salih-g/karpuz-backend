@@ -39,7 +39,6 @@ userSchema.post('save', function (error, _, next) {
 
 userSchema.methods.isPasswordMatch = async function (password) {
 	const user = this;
-	return bcrypt.compare(password, user.password);
 };
 
 userSchema.pre('save', async function (next) {

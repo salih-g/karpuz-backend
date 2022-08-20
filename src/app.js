@@ -5,13 +5,12 @@ const express = require('express');
 const volleyball = require('volleyball');
 const httpStatus = require('http-status');
 const compression = require('compression');
-const mongoSanitize = require('express-mongo-sanitize');
 
 const config = require('./config');
 const routes = require('./routes/v1');
 const ApiError = require('./utils/apiError');
 const { authLimiter } = require('./middlewares/rateLimiter');
-const { errorConverter, errorHandler } = require('./middlewares/error');
+const { errorHandler } = require('./middlewares/error');
 
 const app = express();
 
@@ -29,7 +28,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // sanitize request data
 app.use(xss());
-app.use(mongoSanitize());
 
 // gzip compression
 app.use(compression());
@@ -50,9 +48,6 @@ app.use('/v1', routes);
 app.use((req, res, next) => {
 	next(new ApiError(httpStatus.NOT_FOUND, 'Not found'));
 });
-
-// convert error to ApiError, if needed
-app.use(errorConverter);
 
 // handle error
 app.use(errorHandler);
