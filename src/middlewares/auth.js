@@ -1,9 +1,9 @@
 const httpStatus = require('http-status');
+const { PrismaClient } = require('@prisma/client');
 
 const { verifyToken } = require('../services/token.service');
 const ApiError = require('../utils/apiError');
-
-const { User } = require('../models/index');
+const prisma = new PrismaClient();
 
 const auth = async (req, res, next) => {
 	let token;
@@ -22,7 +22,11 @@ const auth = async (req, res, next) => {
 	try {
 		const { sub } = await verifyToken(token);
 
-		const user = await User.findById(sub);
+		const user = await prisma.user.findUnique({
+			where: {
+				id: sub,
+			},
+		});
 
 		if (!user)
 			return next(new ApiError(httpStatus.UNAUTHORIZED, 'Please authenticate'));
@@ -30,7 +34,12 @@ const auth = async (req, res, next) => {
 		req.user = user;
 		next();
 	} catch (err) {
-		return next(new ApiError(httpStatus.UNAUTHORIZED, 'Please authenticate'));
+		return next(
+			new ApiError(
+				httpStatus.UNAUTHORIZED,
+				err.message || 'Please authenticate',
+			),
+		);
 	}
 };
 

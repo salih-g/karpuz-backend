@@ -2,8 +2,8 @@ const Joi = require('joi');
 
 const createContent = {
 	body: Joi.object().keys({
-		username: Joi.string().required(),
-		post: Joi.string().required(),
+		userId: Joi.string().required(),
+		body: Joi.string().required(),
 	}),
 };
 

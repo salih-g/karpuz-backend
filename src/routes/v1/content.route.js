@@ -29,6 +29,7 @@ router.put(
 );
 
 router.get('/paginated', contentController.getPaginated);
+router.get('/test', contentController.test);
 
 router.get('/:id', contentController.getContentById);
 router.get('/user/:username', contentController.getContentsWithUsername);
