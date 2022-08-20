@@ -56,6 +56,42 @@ const likePost = catchAsync(async (req, res, next) => {
 	}
 });
 
+const likeComment = catchAsync(async (req, res, next) => {
+	const { commentId, userId } = req.body;
+
+	if (!commentId) {
+		return next(
+			new ApiError(
+				httpStatus.BAD_REQUEST,
+				'You need commentId for like/dislike',
+			),
+		);
+	}
+
+	try {
+		const like = await prisma.commentLike.findUnique({
+			where: {
+				id: commentId,
+			},
+		});
+
+		if (like == null) {
+			await prisma.commentLike.create({
+				data: { id: commentId, commentId, userId },
+			});
+			res.status(httpStatus.OK).send({ message: 'liked' });
+		} else {
+			await prisma.commentLike.delete({ where: { id: commentId } });
+			res.status(httpStatus.OK).send({ message: 'disliked' });
+		}
+	} catch (error) {
+		throw new ApiError(
+			httpStatus.INTERNAL_SERVER_ERROR,
+			error.message || error,
+		);
+	}
+});
+
 const createComment = catchAsync(async (req, res) => {
 	const { userId, postId, body } = req.body;
 
@@ -99,7 +135,10 @@ const getAllContent = catchAsync(async (req, res) => {
 		}
 
 		const posts = await prisma.post.findMany({
-			include: { comments: true, postLikes: true },
+			include: {
+				comments: { include: { commentLikes: true } },
+				postLikes: true,
+			},
 			orderBy: {
 				createdAt: 'desc',
 			},
@@ -121,7 +160,7 @@ const getContentById = catchAsync(async (req, res) => {
 		const contents = await prisma.post.findUnique({
 			where: { id: postId },
 			include: {
-				comments: true,
+				comments: { include: { commentLikes: true } },
 				postLikes: true,
 			},
 		});
@@ -143,7 +182,12 @@ const getContentsWithUsername = catchAsync(async (req, res) => {
 			id: true,
 			username: true,
 			role: true,
-			posts: { include: { comments: true, postLikes: true } },
+			posts: {
+				include: {
+					comments: { include: { commentLikes: true } },
+					postLikes: true,
+				},
+			},
 		},
 	});
 	res.status(httpStatus.OK).send(contents);
@@ -166,6 +210,7 @@ module.exports = {
 	createContent,
 	createComment,
 	likePost,
+	likeComment,
 	getAllContent,
 	getContentById,
 	getContentsWithUsername,

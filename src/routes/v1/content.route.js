@@ -22,6 +22,7 @@ router.post(
 );
 
 router.put('/likePost', auth, contentController.likePost);
+router.put('/likeComment', auth, contentController.likeComment);
 
 router.get('/', contentController.getAllContent);
 router.get('/test', contentController.test);
