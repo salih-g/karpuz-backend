@@ -57,11 +57,22 @@ const likePost = catchAsync(async (req, res, next) => {
 });
 
 const createComment = catchAsync(async (req, res) => {
-	const { body: commentBody } = req;
+	const { userId, postId, body } = req.body;
 
-	const content = await contentService.createComment(commentBody);
+	console.log('abbas', userId, postId, body);
 
-	res.status(httpStatus.CREATED).send(content);
+	try {
+		const comment = await prisma.comment.create({
+			data: { postId, userId, body },
+		});
+
+		res.status(httpStatus.CREATED).send(comment);
+	} catch (error) {
+		throw new ApiError(
+			httpStatus.INTERNAL_SERVER_ERROR,
+			error.message || error,
+		);
+	}
 });
 
 const getPaginated = catchAsync(async (req, res) => {

@@ -9,9 +9,9 @@ const createContent = {
 
 const createComment = {
 	body: Joi.object().keys({
-		username: Joi.string().required(),
-		contentId: Joi.string().required(),
-		comment: Joi.string().required(),
+		userId: Joi.string().required(),
+		postId: Joi.string().required(),
+		body: Joi.string().required(),
 	}),
 };
 
