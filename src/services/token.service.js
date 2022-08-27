@@ -6,7 +6,7 @@ const config = require('../config');
 const generateToken = (
 	userId,
 	type = config.tokenTypes.ACCESS,
-	secret = config.jwt.secret,
+	secret = config.jwt.accessSecret,
 ) => {
 	const payload = {
 		sub: userId,

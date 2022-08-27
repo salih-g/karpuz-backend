@@ -1,0 +1,18 @@
+###Register
+POST  http://localhost:8081/v1/auth/register
+content-type: application/json
+
+{
+	"email":"test@test.com",
+	"username": "testuser",
+	"password": "test123"
+}
+
+###Login
+POST  http://localhost:8081/v1/auth/login
+content-type: application/json
+
+{
+	"username": "testuser",
+	"password": "test123"
+}

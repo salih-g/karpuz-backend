@@ -23,7 +23,10 @@ const register = catchAsync(async (req, res) => {
 		res.status(httpStatus.CREATED).send({ user });
 	} catch (error) {
 		if (error.code === 'P2002') {
-			throw new ApiError(httpStatus.BAD_REQUEST, 'This username was taken');
+			throw new ApiError(
+				httpStatus.BAD_REQUEST,
+				'This username or email was taken',
+			);
 		}
 		throw new ApiError(
 			httpStatus.INTERNAL_SERVER_ERROR,
@@ -43,10 +46,15 @@ const login = catchAsync(async (req, res) => {
 		});
 
 		if (!user) {
-			throw new ApiError(httpStatus.BAD_REQUEST, 'User can not found');
+			throw new ApiError(
+				httpStatus.BAD_REQUEST,
+				'Incorrect username or password',
+			);
 		}
 
-		if (!bcrypt.compare(password, user.password)) {
+		const isPasswordTrue = await bcrypt.compare(password, user.password);
+
+		if (!isPasswordTrue) {
 			throw new ApiError(
 				httpStatus.UNAUTHORIZED,
 				'Incorrect username or password',
@@ -56,7 +64,7 @@ const login = catchAsync(async (req, res) => {
 		user.token = await tokenService.generateAuthTokens(user);
 		user.password = undefined;
 
-		res.status(httpStatus.OK).send(user);
+		res.status(httpStatus.OK).send({ user });
 	} catch (error) {
 		throw new ApiError(
 			error.statusCode || httpStatus.INTERNAL_SERVER_ERROR,
