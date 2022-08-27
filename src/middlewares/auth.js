@@ -5,7 +5,7 @@ const { verifyToken } = require('../services/token.service');
 const ApiError = require('../utils/apiError');
 const prisma = new PrismaClient();
 
-const auth = async (req, res, next) => {
+const auth = async (req, _, next) => {
 	let token;
 
 	if (
@@ -20,11 +20,11 @@ const auth = async (req, res, next) => {
 	}
 
 	try {
-		const { sub } = await verifyToken(token);
+		const { sub: userId } = await verifyToken(token);
 
 		const user = await prisma.user.findUnique({
 			where: {
-				id: sub,
+				id: userId,
 			},
 		});
 

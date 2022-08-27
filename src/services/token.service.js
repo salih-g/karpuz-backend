@@ -20,7 +20,8 @@ const generateAuthTokens = async (user) => {
 	return generateToken(user.id);
 };
 
-const verifyToken = async (token) => await jwt.verify(token, config.jwt.secret);
+const verifyToken = async (token) =>
+	await jwt.verify(token, config.jwt.accessSecret);
 
 module.exports = {
 	generateToken,
