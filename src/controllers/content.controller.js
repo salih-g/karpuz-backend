@@ -1,4 +1,5 @@
 const httpStatus = require('http-status');
+const { user } = require('../prisma');
 
 const prisma = require('../prisma');
 const ApiError = require('../utils/apiError');
@@ -134,7 +135,19 @@ const getAllContent = catchAsync(async (req, res) => {
 
 		const posts = await prisma.post.findMany({
 			include: {
-				comments: { include: { commentLikes: true } },
+				user: {
+					select: {
+						username: true,
+					},
+				},
+				comments: {
+					include: {
+						commentLikes: true,
+						user: {
+							select: { username: true },
+						},
+					},
+				},
 				postLikes: true,
 			},
 			orderBy: {
@@ -158,7 +171,19 @@ const getContentById = catchAsync(async (req, res) => {
 		const contents = await prisma.post.findUnique({
 			where: { id: postId },
 			include: {
-				comments: { include: { commentLikes: true } },
+				user: {
+					select: {
+						username: true,
+					},
+				},
+				comments: {
+					include: {
+						commentLikes: true,
+						user: {
+							select: { username: true },
+						},
+					},
+				},
 				postLikes: true,
 			},
 		});
