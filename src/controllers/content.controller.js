@@ -1,16 +1,27 @@
 const httpStatus = require('http-status');
-const { user } = require('../prisma');
+const sanitizeHtml = require('sanitize-html');
 
 const prisma = require('../prisma');
+const { urlify } = require('../utils');
 const ApiError = require('../utils/apiError');
 const catchAsync = require('../utils/catchAsync');
+
+const sanitizeOptions = {
+	allowedTags: ['a', 'b'],
+	allowedAttributes: {
+		a: ['href', 'target', 'style'],
+	},
+};
 
 const createContent = catchAsync(async (req, res) => {
 	const { body: contentBody } = req;
 
+	const urlifyBody = urlify(contentBody.body);
+	const cleanBody = sanitizeHtml(urlifyBody, sanitizeOptions);
+
 	try {
 		const content = await prisma.post.create({
-			data: { body: contentBody.body, userId: contentBody.userId },
+			data: { body: cleanBody, userId: contentBody.userId },
 		});
 
 		res.status(httpStatus.CREATED).send(content);
@@ -94,11 +105,12 @@ const likeComment = catchAsync(async (req, res, next) => {
 const createComment = catchAsync(async (req, res) => {
 	const { userId, postId, body } = req.body;
 
-	console.log('abbas', userId, postId, body);
+	const urlifyBody = urlify(body);
+	const cleanBody = sanitizeHtml(urlifyBody, sanitizeOptions);
 
 	try {
 		const comment = await prisma.comment.create({
-			data: { postId, userId, body },
+			data: { postId, userId, cleanBody },
 		});
 
 		res.status(httpStatus.CREATED).send(comment);
