@@ -44,7 +44,6 @@ const likePost = catchAsync(async (req, res, next) => {
 
 	try {
 		const postLikes = await prisma.postLike.findMany({});
-
 		let isPostLiked = false;
 		let likedPostId;
 
@@ -88,21 +87,39 @@ const likeComment = catchAsync(async (req, res, next) => {
 	}
 
 	try {
-		const like = await prisma.commentLike.findUnique({
-			where: {
-				id: commentId,
-			},
+		const commentLikes = await prisma.commentLike.findMany({});
+		let isCommentLiked = false;
+		let likedCommentId;
+
+		commentLikes.forEach((like) => {
+			if (like.userId === userId && like.commentId === commentId) {
+				likedCommentId = like.id;
+				isCommentLiked = true;
+			}
 		});
 
-		if (like == null) {
+		if (!isCommentLiked) {
 			await prisma.commentLike.create({
-				data: { id: commentId, commentId, userId },
+				data: {
+					commentId,
+					userId,
+				},
 			});
-			res.status(httpStatus.OK).send({ message: 'liked' });
+			return res.status(httpStatus.OK).send({ message: 'liked' });
 		} else {
-			await prisma.commentLike.delete({ where: { id: commentId } });
-			res.status(httpStatus.OK).send({ message: 'disliked' });
+			await prisma.commentLike.delete({ where: { id: likedCommentId } });
+			return res.status(httpStatus.OK).send({ message: 'disliked' });
 		}
+
+		// if (like == null) {
+		// 	await prisma.commentLike.create({
+		// 		data: { id: commentId, commentId, userId },
+		// 	});
+		// 	res.status(httpStatus.OK).send({ message: 'liked' });
+		// } else {
+		// 	await prisma.commentLike.delete({ where: { id: commentId } });
+		// 	res.status(httpStatus.OK).send({ message: 'disliked' });
+		// }
 	} catch (error) {
 		throw new ApiError(
 			httpStatus.INTERNAL_SERVER_ERROR,
@@ -119,7 +136,7 @@ const createComment = catchAsync(async (req, res) => {
 
 	try {
 		const comment = await prisma.comment.create({
-			data: { postId, userId, cleanBody },
+			data: { postId, userId, body: cleanBody },
 		});
 
 		res.status(httpStatus.CREATED).send(comment);
