@@ -43,20 +43,29 @@ const likePost = catchAsync(async (req, res, next) => {
 	}
 
 	try {
-		const like = await prisma.postLike.findUnique({
-			where: {
-				id: postId,
-			},
+		const postLikes = await prisma.postLike.findMany({});
+
+		let isPostLiked = false;
+		let likedPostId;
+
+		postLikes.forEach((like) => {
+			if (like.userId === userId && like.postId === postId) {
+				likedPostId = like.id;
+				isPostLiked = true;
+			}
 		});
 
-		if (like == null) {
+		if (!isPostLiked) {
 			await prisma.postLike.create({
-				data: { id: postId, postId, userId },
+				data: {
+					postId,
+					userId,
+				},
 			});
-			res.status(httpStatus.OK).send({ message: 'liked' });
+			return res.status(httpStatus.OK).send({ message: 'liked' });
 		} else {
-			await prisma.postLike.delete({ where: { id: postId } });
-			res.status(httpStatus.OK).send({ message: 'disliked' });
+			await prisma.postLike.delete({ where: { id: likedPostId } });
+			return res.status(httpStatus.OK).send({ message: 'disliked' });
 		}
 	} catch (error) {
 		throw new ApiError(
@@ -228,19 +237,6 @@ const getContentsWithUsername = catchAsync(async (req, res) => {
 	res.status(httpStatus.OK).send(contents);
 });
 
-const test = catchAsync(async (req, res) => {
-	const resp = await prisma.user.findMany({
-		select: {
-			username: true,
-			commentLikes: true,
-			postLikes: true,
-			posts: true,
-			comments: true,
-		},
-	});
-	res.send({ resp });
-});
-
 module.exports = {
 	createContent,
 	createComment,
@@ -249,5 +245,4 @@ module.exports = {
 	getAllContent,
 	getContentById,
 	getContentsWithUsername,
-	test,
 };
